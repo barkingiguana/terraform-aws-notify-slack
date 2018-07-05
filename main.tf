@@ -1,3 +1,7 @@
+variable "lambda_path" {
+  default = "NONE"
+}
+
 data "aws_sns_topic" "this" {
   count = "${(1 - var.create_sns_topic) * var.create}"
 
@@ -11,7 +15,9 @@ resource "aws_sns_topic" "this" {
 }
 
 locals {
+  lambda_default_path = "${substr("${path.module}/functions/notify_slack.py", length(path.cwd) + 1, -1)}"
   sns_topic_arn = "${element(compact(concat(aws_sns_topic.this.*.arn, data.aws_sns_topic.this.*.arn, list(""))), 0)}"
+  lambda_path = "${var.lambda_path == "NONE" ? local.lambda_default_path : var.lambda_path}"
 }
 
 resource "aws_sns_topic_subscription" "sns_notify_slack" {
@@ -34,7 +40,7 @@ resource "aws_lambda_permission" "sns_notify_slack" {
 
 data "null_data_source" "lambda_file" {
   inputs {
-    filename = "${substr("${path.module}/functions/notify_slack.py", length(path.cwd) + 1, -1)}"
+    filename = "${local.lambda_path}"
   }
 }
 
