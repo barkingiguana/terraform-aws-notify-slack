@@ -1,3 +1,11 @@
+variable "region" {
+  default = "eu-west-1"
+}
+
+variable "lambda_path" {
+  default = "NONE"
+}
+
 variable "create" {
   description = "Whether to create all resources"
   default     = true

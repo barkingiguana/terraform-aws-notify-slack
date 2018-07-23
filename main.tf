@@ -1,14 +1,23 @@
-variable "lambda_path" {
-  default = "NONE"
+provider "aws" {
+  alias   = "notifier"
+  version = "~> 1.27"
+
+  assume_role {
+    role_arn = "${var.role_arn}"
+  }
+
+  region = "${var.region}"
 }
 
 data "aws_sns_topic" "this" {
+  provider = "aws.notifier"
   count = "${(1 - var.create_sns_topic) * var.create}"
 
   name = "${var.sns_topic_name}"
 }
 
 resource "aws_sns_topic" "this" {
+  provider = "aws.notifier"
   count = "${var.create_sns_topic * var.create}"
 
   name = "${var.sns_topic_name}"
@@ -21,6 +30,7 @@ locals {
 }
 
 resource "aws_sns_topic_subscription" "sns_notify_slack" {
+  provider = "aws.notifier"
   count = "${var.create}"
 
   topic_arn = "${local.sns_topic_arn}"
@@ -29,6 +39,7 @@ resource "aws_sns_topic_subscription" "sns_notify_slack" {
 }
 
 resource "aws_lambda_permission" "sns_notify_slack" {
+  provider = "aws.notifier"
   count = "${var.create}"
 
   statement_id  = "AllowExecutionFromSNS"
@@ -59,6 +70,7 @@ data "archive_file" "notify_slack" {
 }
 
 resource "aws_lambda_function" "notify_slack" {
+  provider = "aws.notifier"
   count = "${var.create}"
 
   filename = "${data.archive_file.notify_slack.0.output_path}"

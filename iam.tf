@@ -32,6 +32,7 @@ data "aws_iam_policy_document" "lambda_basic" {
 }
 
 data "aws_iam_policy_document" "lambda" {
+  provider = "aws.notifier"
   count = "${(var.create_with_kms_key == 1 ? 1 : 0) * var.create}"
 
   source_json = "${data.aws_iam_policy_document.lambda_basic.0.json}"
@@ -48,6 +49,7 @@ data "aws_iam_policy_document" "lambda" {
 }
 
 resource "aws_iam_role" "lambda" {
+  provider = "aws.notifier"
   count = "${var.create}"
 
   name_prefix        = "lambda"
@@ -55,6 +57,7 @@ resource "aws_iam_role" "lambda" {
 }
 
 resource "aws_iam_role_policy" "lambda" {
+  provider = "aws.notifier"
   count = "${var.create}"
 
   name_prefix = "lambda-policy-"
