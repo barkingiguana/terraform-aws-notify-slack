@@ -1,3 +1,5 @@
+variable "role_arn" {}
+
 variable "region" {
   default = "eu-west-1"
 }
