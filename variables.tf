@@ -32,6 +32,11 @@ variable "sns_topic_name" {
   description = "The name of the SNS topic to create"
 }
 
+variable "sns_topic_kms_key_id" {
+  description = "ARN of the KMS key used for enabling SSE on the topic"
+  default     = ""
+}
+
 variable "slack_webhook_url" {
   description = "The URL of Slack webhook"
 }

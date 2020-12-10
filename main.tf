@@ -13,6 +13,7 @@ data "aws_sns_topic" "this" {
   provider = "aws.notifier"
   count = "${(1 - var.create_sns_topic) * var.create}"
 
+  kms_master_key_id = "${var.sns_topic_kms_key_id}"
   name = "${var.sns_topic_name}"
 }
 
